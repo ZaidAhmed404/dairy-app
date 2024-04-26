@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "854551621022",
+    "project_id": "meo-shop-2488c",
+    "storage_bucket": "meo-shop-2488c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854551621022:android:7dab31dc85587ced107a8f",
+        "android_client_info": {
+          "package_name": "com.example.meo_shop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFV4sEX40q5I4xugWovNa6i-WzELVFnZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
