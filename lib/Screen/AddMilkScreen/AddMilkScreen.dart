@@ -70,7 +70,7 @@ class AddMilkScreen extends StatelessWidget {
                           return 'Name is required';
                         }
                         return null;
-                      },
+                      },haveHeading: true,onChange: (text){},
                     ),
                     const SizedBox(
                       height: 10,
@@ -92,7 +92,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Milk is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                         TextFieldWidget(
                           textFieldWidth:
@@ -108,7 +108,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Fat is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                       ],
                     ),
@@ -132,7 +132,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Milk is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                         TextFieldWidget(
                           textFieldWidth:
@@ -148,7 +148,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Fat is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                       ],
                     ),
@@ -172,7 +172,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Milk is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                         TextFieldWidget(
                           textFieldWidth:
@@ -188,7 +188,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Fat is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                       ],
                     ),
@@ -212,7 +212,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Milk is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                         TextFieldWidget(
                           textFieldWidth:
@@ -228,7 +228,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Fat is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                       ],
                     ),
@@ -252,7 +252,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Milk is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                         TextFieldWidget(
                           textFieldWidth:
@@ -268,7 +268,7 @@ class AddMilkScreen extends StatelessWidget {
                               return 'Fat is required';
                             }
                             return null;
-                          },
+                          },haveHeading: true,onChange: (text){},
                         ),
                       ],
                     ),
@@ -288,7 +288,7 @@ class AddMilkScreen extends StatelessWidget {
                           return 'Price is required';
                         }
                         return null;
-                      },
+                      },haveHeading: true,onChange: (text){},
                     ),
                     const SizedBox(
                       height: 20,

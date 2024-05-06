@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../Model/MilkSentModel.dart';
+import '../../Services/Widgets/DeleteMilkSendDialogWidget.dart';
+import '../../Widgets/TextFieldWidget.dart';
 
 class MilkSoldScreen extends StatefulWidget {
   Function(int) onAddPressed;
@@ -14,6 +16,8 @@ class MilkSoldScreen extends StatefulWidget {
 
 class _MilkSoldScreenState extends State<MilkSoldScreen> {
   int itemPerPage = 100;
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,28 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                         )))
               ],
             ),
+            const SizedBox(
+              height: 2,
+            ),
+            TextFieldWidget(
+              textFieldWidth: MediaQuery.of(context).size.width,
+              hintText: "Search Name",
+              text: "Name",
+              controller: searchController,
+              isPassword: false,
+              isEnabled: true,
+              textInputType: TextInputType.text,
+              validationFunction: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Name is required';
+                }
+                return null;
+              },
+              haveHeading: false,
+              onChange: (text) {
+                setState(() {});
+              },
+            ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.7,
@@ -64,11 +90,25 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   }
-                  List<MilkSentModel> milkData = snapshot.data!.docs.map((doc) {
-                    Map<String, dynamic> data =
-                        doc.data() as Map<String, dynamic>;
-                    return MilkSentModel.fromMap(data);
-                  }).toList();
+                  List<MilkSentModel> milkData = [];
+                  if (searchController.text.isNotEmpty) {
+                    milkData = snapshot.data!.docs
+                        .map((doc) {
+                          Map<String, dynamic> data =
+                              doc.data() as Map<String, dynamic>;
+                          return MilkSentModel.fromMap(data, doc.id);
+                        })
+                        .where((element) =>
+                            element.name.contains(searchController.text))
+                        .toList();
+                  } else {
+                    milkData = snapshot.data!.docs.map((doc) {
+                      Map<String, dynamic> data =
+                          doc.data() as Map<String, dynamic>;
+                      return MilkSentModel.fromMap(data, doc.id);
+                    }).toList();
+                  }
+
                   return SizedBox(
                     child: ListView.builder(
                       itemCount: milkData.length,
@@ -106,6 +146,29 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                                               fontWeight: FontWeight.w400),
                                         ),
                                       ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.red.withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        child: IconButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) => Dialog(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      child:
+                                                          DeleteMilkSoldDialogWidget(
+                                                        docId: milk.id,
+                                                        milk: milk.milk,
+                                                      )));
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            )),
+                                      ),
                                     ],
                                   ),
                                   const Divider(),
@@ -125,7 +188,7 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                                       SizedBox(
                                         width: width * 0.3,
                                         child: Text(
-                                          milk.milk,
+                                          "${milk.milk}-Kg",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -150,7 +213,7 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                                       SizedBox(
                                         width: width * 0.3,
                                         child: Text(
-                                          milk.milk_5,
+                                          "${milk.milk_5}-Kg",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -175,7 +238,7 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                                       SizedBox(
                                         width: width * 0.3,
                                         child: Text(
-                                          milk.pending,
+                                          "Rs-${milk.pending}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -200,7 +263,7 @@ class _MilkSoldScreenState extends State<MilkSoldScreen> {
                                       SizedBox(
                                         width: width * 0.4,
                                         child: Text(
-                                          milk.pending160,
+                                          "Rs-${milk.pending160}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),

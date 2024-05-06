@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../Model/PaymentPendingModel.dart';
 import '../../Model/PaymentReceivedModel.dart';
 import '../../Widgets/ReceivePaymentDialogWidget.dart';
+import '../../Widgets/TextFieldWidget.dart';
 
 enum options { All, Pending }
 
@@ -22,6 +23,8 @@ class _PaymentReceivedScreenState extends State<PaymentReceivedScreen> {
   options? _character = options.All;
   String selected = "All";
   int itemPerPage = 100;
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +76,28 @@ class _PaymentReceivedScreenState extends State<PaymentReceivedScreen> {
                 )
               ],
             ),
+            const SizedBox(
+              height: 2,
+            ),
+            TextFieldWidget(
+              textFieldWidth: MediaQuery.of(context).size.width,
+              hintText: "Search Name",
+              text: "Name",
+              controller: searchController,
+              isPassword: false,
+              isEnabled: true,
+              textInputType: TextInputType.text,
+              validationFunction: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Name is required';
+                }
+                return null;
+              },
+              haveHeading: false,
+              onChange: (text) {
+                setState(() {});
+              },
+            ),
             if (selected == "Pending")
               SizedBox(
                 width: MediaQuery.of(context).size.width,
@@ -85,21 +110,36 @@ class _PaymentReceivedScreenState extends State<PaymentReceivedScreen> {
                       .snapshots(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator(
-                        color: Colors.blue,
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.blue,
+                        ),
                       );
                     }
 
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     }
-                    List<PaymentPendingModel> paymentData =
-                        snapshot.data!.docs.map((doc) {
-                      Map<String, dynamic> data =
-                          doc.data() as Map<String, dynamic>;
-                      return PaymentPendingModel.fromJson(data);
-                    }).toList();
-                    final documents = snapshot.data!.docs;
+                    List<PaymentPendingModel> paymentData = [];
+                    if (searchController.text.isNotEmpty) {
+                      paymentData = snapshot.data!.docs
+                          .map((doc) {
+                            Map<String, dynamic> data =
+                                doc.data() as Map<String, dynamic>;
+                            return PaymentPendingModel.fromJson(data, doc.id);
+                          })
+                          .where((element) =>
+                              element.name.contains(searchController.text))
+                          .toList();
+                    } else {
+                      paymentData = snapshot.data!.docs.map((doc) {
+                        Map<String, dynamic> data =
+                            doc.data() as Map<String, dynamic>;
+                        return PaymentPendingModel.fromJson(data, doc.id);
+                      }).toList();
+                    }
+
+                    // final documents = snapshot.data!.docs;
 
                     return SizedBox(
                       child: ListView.builder(
@@ -149,8 +189,7 @@ class _PaymentReceivedScreenState extends State<PaymentReceivedScreen> {
                                               onPressed: () =>
                                                   showReceivePayDialogue(
                                                       context: context,
-                                                      docId:
-                                                          documents[index].id,
+                                                      docId: payment.id,
                                                       price: payment.pending,
                                                       price160:
                                                           payment.pending160,
@@ -219,12 +258,24 @@ class _PaymentReceivedScreenState extends State<PaymentReceivedScreen> {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     }
-                    List<PaymentReceivedModel> paymentData =
-                        snapshot.data!.docs.map((doc) {
-                      Map<String, dynamic> data =
-                          doc.data() as Map<String, dynamic>;
-                      return PaymentReceivedModel.fromJson(data);
-                    }).toList();
+                    List<PaymentReceivedModel> paymentData = [];
+                    if (searchController.text.isNotEmpty) {
+                      paymentData = snapshot.data!.docs
+                          .map((doc) {
+                            Map<String, dynamic> data =
+                                doc.data() as Map<String, dynamic>;
+                            return PaymentReceivedModel.fromJson(data);
+                          })
+                          .where((element) =>
+                              element.name.contains(searchController.text))
+                          .toList();
+                    } else {
+                      paymentData = snapshot.data!.docs.map((doc) {
+                        Map<String, dynamic> data =
+                            doc.data() as Map<String, dynamic>;
+                        return PaymentReceivedModel.fromJson(data);
+                      }).toList();
+                    }
 
                     return SizedBox(
                       child: ListView.builder(

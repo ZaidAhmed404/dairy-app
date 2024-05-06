@@ -1,4 +1,5 @@
 class MilkSentModel {
+  String id;
   String date;
   String fat;
   String milk;
@@ -9,7 +10,8 @@ class MilkSentModel {
   String rate;
 
   MilkSentModel(
-      {required this.date,
+      {required this.id,
+      required this.date,
       required this.fat,
       required this.milk,
       required this.name,
@@ -18,8 +20,9 @@ class MilkSentModel {
       required this.rate,
       required this.milk_5});
 
-  factory MilkSentModel.fromMap(Map<String, dynamic> map) {
+  factory MilkSentModel.fromMap(Map<String, dynamic> map, String docId) {
     return MilkSentModel(
+      id: docId,
       date: map['date'].toString(),
       fat: map['fat'].toString(),
       milk: map['milk'].toString(),

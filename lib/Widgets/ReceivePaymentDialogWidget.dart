@@ -107,7 +107,7 @@ class _ReceivePayDialogWidgetState extends State<ReceivePayDialogWidget> {
                     return 'Payment is required';
                   }
                   return null;
-                },
+                },haveHeading: true,onChange: (text){},
               ),
               const SizedBox(
                 height: 50,

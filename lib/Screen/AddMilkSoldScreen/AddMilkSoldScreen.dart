@@ -59,7 +59,7 @@ class AddMilkSoldScreen extends StatelessWidget {
                         return 'Name is required';
                       }
                       return null;
-                    },
+                    },haveHeading: true,onChange: (text){},
                   ),
                   const SizedBox(
                     height: 10,
@@ -81,7 +81,7 @@ class AddMilkSoldScreen extends StatelessWidget {
                             return 'Milk is required';
                           }
                           return null;
-                        },
+                        },haveHeading: true,onChange: (text){},
                       ),
                       TextFieldWidget(
                         textFieldWidth:
@@ -97,7 +97,7 @@ class AddMilkSoldScreen extends StatelessWidget {
                             return 'Fat is required';
                           }
                           return null;
-                        },
+                        },haveHeading: true,onChange: (text){},
                       ),
                     ],
                   ),
@@ -117,7 +117,7 @@ class AddMilkSoldScreen extends StatelessWidget {
                         return 'Price is required';
                       }
                       return null;
-                    },
+                    },haveHeading: true,onChange: (text){},
                   ),
                   const Spacer(),
                   ButtonWidget(

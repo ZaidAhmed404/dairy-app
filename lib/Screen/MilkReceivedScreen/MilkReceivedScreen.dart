@@ -5,6 +5,7 @@ import 'package:meo_shop/Widgets/PayDialogWidget.dart';
 import '../../Model/MilkReceivedModel.dart';
 import '../../Widgets/ConfirmDialogWidget.dart';
 import '../../Widgets/MilkReportDialogWidget.dart';
+import '../../Widgets/TextFieldWidget.dart';
 
 class MilkReceiveScreen extends StatefulWidget {
   Function(int) onAddPressed;
@@ -17,6 +18,8 @@ class MilkReceiveScreen extends StatefulWidget {
 
 class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
   int itemPerPage = 100;
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,28 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                         ))),
               ],
             ),
+            const SizedBox(
+              height: 2,
+            ),
+            TextFieldWidget(
+              textFieldWidth: MediaQuery.of(context).size.width,
+              hintText: "Search Name",
+              text: "Name",
+              controller: searchController,
+              isPassword: false,
+              isEnabled: true,
+              textInputType: TextInputType.text,
+              validationFunction: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Name is required';
+                }
+                return null;
+              },
+              haveHeading: false,
+              onChange: (text) {
+                setState(() {});
+              },
+            ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.7,
@@ -82,13 +107,25 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   }
-                  List<MilkReceivedModel> milkData =
-                      snapshot.data!.docs.map((doc) {
-                    Map<String, dynamic> data =
-                        doc.data() as Map<String, dynamic>;
-                    return MilkReceivedModel.fromMap(data);
-                  }).toList();
-                  final documents = snapshot.data!.docs;
+                  List<MilkReceivedModel> milkData = [];
+                  if (searchController.text.isNotEmpty) {
+                    milkData = snapshot.data!.docs
+                        .map((doc) {
+                          Map<String, dynamic> data =
+                              doc.data() as Map<String, dynamic>;
+                          return MilkReceivedModel.fromMap(data, doc.id);
+                        })
+                        .where((element) =>
+                            element.name.contains(searchController.text))
+                        .toList();
+                  } else {
+                    milkData = snapshot.data!.docs.map((doc) {
+                      Map<String, dynamic> data =
+                          doc.data() as Map<String, dynamic>;
+                      return MilkReceivedModel.fromMap(data, doc.id);
+                    }).toList();
+                  }
+
                   return SizedBox(
                     child: ListView.builder(
                       itemCount: milkData.length,
@@ -141,8 +178,7 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                                           Colors.white,
                                                       child:
                                                           ConfirmDialogWidget(
-                                                        docId:
-                                                            documents[index].id,
+                                                        docId: milk.id,
                                                         milk: milk.totalMilk,
                                                       )));
                                             },
@@ -162,7 +198,7 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                         child: IconButton(
                                             onPressed: () => showPayDialogue(
                                                 context: context,
-                                                docId: documents[index].id,
+                                                docId: milk.id,
                                                 payment_5: milk.price5,
                                                 payment_6: milk.price6,
                                                 name: milk.name),
@@ -208,9 +244,9 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                     children: [
                                       SizedBox(
                                         width: width * 0.25,
-                                        child: const Text(
-                                          "Milk",
-                                          style: TextStyle(
+                                        child: Text(
+                                          "Milk(${milk.totalMilk}-Kg)",
+                                          style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -218,7 +254,7 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                       SizedBox(
                                         width: width * 0.25,
                                         child: Text(
-                                          milk.totalMilk5,
+                                          "${double.parse(milk.totalMilk5).toStringAsFixed(2)}-Kg",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -227,7 +263,7 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                       SizedBox(
                                         width: width * 0.25,
                                         child: Text(
-                                          milk.totalMilk6,
+                                          "${milk.totalMilk6}-Kg",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -252,7 +288,7 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                       SizedBox(
                                         width: width * 0.25,
                                         child: Text(
-                                          milk.price5,
+                                          "Rs-${double.parse(milk.totalPrice5).toStringAsFixed(2)}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -261,7 +297,41 @@ class _MilkReceiveScreenState extends State<MilkReceiveScreen> {
                                       SizedBox(
                                         width: width * 0.25,
                                         child: Text(
-                                          milk.price6,
+                                          "Rs-${double.parse(milk.totalPrice6).toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: width * 0.25,
+                                        child: const Text(
+                                          "Pending",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.25,
+                                        child: Text(
+                                          "Rs-${milk.price5}",
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.25,
+                                        child: Text(
+                                          "Rs-${milk.price6}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),

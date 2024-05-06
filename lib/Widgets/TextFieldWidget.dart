@@ -9,7 +9,8 @@ class TextFieldWidget extends StatefulWidget {
   bool isEnabled;
   TextInputType textInputType;
   double textFieldWidth;
-
+  bool haveHeading;
+  Function(String?) onChange;
   TextFieldWidget(
       {super.key,
       required this.controller,
@@ -19,7 +20,7 @@ class TextFieldWidget extends StatefulWidget {
       required this.validationFunction,
       required this.isEnabled,
       required this.textInputType,
-      required this.textFieldWidth});
+      required this.textFieldWidth,required this.haveHeading,required this.onChange});
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -40,6 +41,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+      if(  widget.haveHeading)
         Row(
           children: [
             Text(
@@ -57,7 +59,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               style: TextStyle(color: Colors.red),
             ),
           ],
-        ),
+        ),  if(  widget.haveHeading)
         const SizedBox(
           height: 5,
         ),
@@ -69,7 +71,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             keyboardType: widget.textInputType,
             obscureText: !viewPassword,
             enabled: widget.isEnabled,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),onChanged:widget.onChange ,
             decoration: InputDecoration(
                 fillColor: Colors.white,
                 filled: true,

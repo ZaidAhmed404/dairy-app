@@ -37,86 +37,88 @@ class MilkServices {
       required String price,
       required BuildContext context}) async {
     FocusScope.of(context).unfocus();
-    // try {
-    if (context.mounted) {
-      BlocProvider.of<LoadingCubit>(context).setLoading(true);
-    }
-    int total = 0;
-
-    await analytics
-        .doc("0pBF1p9wVCcoAsbAWt64")
-        .get()
-        .then((DocumentSnapshot doc) {
-      if (doc.exists) {
-        log(doc["total"].toString(), name: "total");
-        total = int.parse(doc["total"].toString());
+    try {
+      if (context.mounted) {
+        BlocProvider.of<LoadingCubit>(context).setLoading(true);
       }
-    }).catchError((error) {
-      print("Error getting document: $error");
-    });
-    total = total +
-        int.parse(milk1) +
-        int.parse(milk2) +
-        int.parse(milk3) +
-        int.parse(milk4) +
-        int.parse(milk5);
+      int total = 0;
 
-    log("${total}", name: "total");
+      await analytics
+          .doc("0pBF1p9wVCcoAsbAWt64")
+          .get()
+          .then((DocumentSnapshot doc) {
+        if (doc.exists) {
+          log(doc["total"].toString(), name: "total");
+          total = int.parse(doc["total"].toString());
+        }
+      }).catchError((error) {
+        print("Error getting document: $error");
+      });
+      total = total +
+          int.parse(milk1) +
+          int.parse(milk2) +
+          int.parse(milk3) +
+          int.parse(milk4) +
+          int.parse(milk5);
 
-    await analytics.doc("0pBF1p9wVCcoAsbAWt64").set({"total": total});
+      log("${total}", name: "total");
 
-    double totalMilk5 = ((double.parse(milk1) * double.parse(fat1)) / 5) +
-        ((double.parse(milk2) * double.parse(fat2)) / 5) +
-        ((double.parse(milk3) * double.parse(fat3)) / 5) +
-        ((double.parse(milk4) * double.parse(fat4)) / 5) +
-        ((double.parse(milk5) * double.parse(fat5)) / 5);
-    double totalMilk6 = ((double.parse(milk1) * double.parse(fat1)) / 6) +
-        ((double.parse(milk2) * double.parse(fat2)) / 6) +
-        ((double.parse(milk3) * double.parse(fat3)) / 6) +
-        ((double.parse(milk4) * double.parse(fat4)) / 6) +
-        ((double.parse(milk5) * double.parse(fat5)) / 6);
-    final now = DateTime.now();
-    await milkReceived
-        .add({
-          "name": name,
-          "milk_1": milk1,
-          "fat_1": fat1,
-          "milk_2": milk2,
-          "fat_2": fat2,
-          "milk_3": milk3,
-          "fat_3": fat3,
-          "milk_4": milk4,
-          "fat_4": fat4,
-          "milk_5": milk5,
-          "fat_5": fat5,
-          "price": price,
-          "totalMilk": int.parse(milk1) +
-              int.parse(milk2) +
-              int.parse(milk3) +
-              int.parse(milk4) +
-              int.parse(milk5),
-          "total_5": totalMilk5,
-          "total_6": totalMilk6,
-          "price_5": double.parse(price) * totalMilk5,
-          "price_6": double.parse(price) * totalMilk6,
-          "rate": price,
-          "date": "${now.day}-${now.month}-${now.year}",
-        })
-        .then((value) => log("Milk data Added", name: "success"))
-        .catchError(
-            (error) => log("Failed to add milk data: $error", name: "error"));
-    if (context.mounted) {
-      messageWidget(
-          context: context,
-          isError: false,
-          message: "Data Entered Successfully");
+      await analytics.doc("0pBF1p9wVCcoAsbAWt64").set({"total": total});
+
+      double totalMilk5 = ((double.parse(milk1) * double.parse(fat1)) / 5) +
+          ((double.parse(milk2) * double.parse(fat2)) / 5) +
+          ((double.parse(milk3) * double.parse(fat3)) / 5) +
+          ((double.parse(milk4) * double.parse(fat4)) / 5) +
+          ((double.parse(milk5) * double.parse(fat5)) / 5);
+      double totalMilk6 = ((double.parse(milk1) * double.parse(fat1)) / 6) +
+          ((double.parse(milk2) * double.parse(fat2)) / 6) +
+          ((double.parse(milk3) * double.parse(fat3)) / 6) +
+          ((double.parse(milk4) * double.parse(fat4)) / 6) +
+          ((double.parse(milk5) * double.parse(fat5)) / 6);
+      final now = DateTime.now();
+      await milkReceived
+          .add({
+            "name": name,
+            "milk_1": milk1,
+            "fat_1": fat1,
+            "milk_2": milk2,
+            "fat_2": fat2,
+            "milk_3": milk3,
+            "fat_3": fat3,
+            "milk_4": milk4,
+            "fat_4": fat4,
+            "milk_5": milk5,
+            "fat_5": fat5,
+            "price": price,
+            "totalMilk": int.parse(milk1) +
+                int.parse(milk2) +
+                int.parse(milk3) +
+                int.parse(milk4) +
+                int.parse(milk5),
+            "total_5": totalMilk5,
+            "total_6": totalMilk6,
+            "total_price_5": double.parse(price) * totalMilk5,
+            "total_price_6": double.parse(price) * totalMilk6,
+            "price_5": double.parse(price) * totalMilk5,
+            "price_6": double.parse(price) * totalMilk6,
+            "rate": price,
+            "date": "${now.day}-${now.month}-${now.year}",
+          })
+          .then((value) => log("Milk data Added", name: "success"))
+          .catchError(
+              (error) => log("Failed to add milk data: $error", name: "error"));
+      if (context.mounted) {
+        messageWidget(
+            context: context,
+            isError: false,
+            message: "Data Entered Successfully");
+      }
+    } catch (error) {
+      if (context.mounted) {
+        messageWidget(
+            context: context, isError: true, message: error.toString());
+      }
     }
-    // } catch (error) {
-    //   if (context.mounted) {
-    //     messageWidget(
-    //         context: context, isError: true, message: error.toString());
-    //   }
-    // }
     BlocProvider.of<LoadingCubit>(context).setLoading(false);
   }
 
@@ -320,6 +322,32 @@ class MilkServices {
           .doc("0pBF1p9wVCcoAsbAWt64")
           .set({"total": total - int.parse(milk)});
       await milkReceived.doc(docId).delete();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  deleteMilkSold({required String docId, required String milk}) async {
+    try {
+      int total = 0;
+      await analytics
+          .doc("0pBF1p9wVCcoAsbAWt64")
+          .get()
+          .then((DocumentSnapshot doc) {
+        if (doc.exists) {
+          total = doc["total"];
+
+          log("$total");
+        }
+      }).catchError((error) {
+        print("Error getting document: $error");
+      });
+      log("$milk", name: "milk");
+      log("${total - int.parse(milk)}");
+      await analytics
+          .doc("0pBF1p9wVCcoAsbAWt64")
+          .set({"total": total + int.parse(milk)});
+      await milkSent.doc(docId).delete();
     } catch (e) {
       return false;
     }

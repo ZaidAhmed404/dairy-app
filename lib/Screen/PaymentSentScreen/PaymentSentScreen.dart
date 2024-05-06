@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meo_shop/Model/PaymentSentModel.dart';
 
+import '../../Widgets/TextFieldWidget.dart';
+
 class PaymentSentScreen extends StatefulWidget {
   PaymentSentScreen({
     super.key,
@@ -13,6 +15,8 @@ class PaymentSentScreen extends StatefulWidget {
 
 class _PaymentSentScreenState extends State<PaymentSentScreen> {
   int itemPerPage = 100;
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,28 @@ class _PaymentSentScreenState extends State<PaymentSentScreen> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            TextFieldWidget(
+              textFieldWidth: MediaQuery.of(context).size.width,
+              hintText: "Search Name",
+              text: "Name",
+              controller: searchController,
+              isPassword: false,
+              isEnabled: true,
+              textInputType: TextInputType.text,
+              validationFunction: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Name is required';
+                }
+                return null;
+              },
+              haveHeading: false,
+              onChange: (text) {
+                setState(() {});
+              },
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -51,12 +77,24 @@ class _PaymentSentScreenState extends State<PaymentSentScreen> {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   }
-                  List<PaymentSentModel> paymentData =
-                      snapshot.data!.docs.map((doc) {
-                    Map<String, dynamic> data =
-                        doc.data() as Map<String, dynamic>;
-                    return PaymentSentModel.fromJson(data);
-                  }).toList();
+                  List<PaymentSentModel> paymentData = [];
+                  if (searchController.text.isNotEmpty) {
+                    paymentData = snapshot.data!.docs
+                        .map((doc) {
+                          Map<String, dynamic> data =
+                              doc.data() as Map<String, dynamic>;
+                          return PaymentSentModel.fromJson(data);
+                        })
+                        .where((element) =>
+                            element.name.contains(searchController.text))
+                        .toList();
+                  } else {
+                    paymentData = snapshot.data!.docs.map((doc) {
+                      Map<String, dynamic> data =
+                          doc.data() as Map<String, dynamic>;
+                      return PaymentSentModel.fromJson(data);
+                    }).toList();
+                  }
 
                   return SizedBox(
                     child: ListView.builder(
@@ -83,13 +121,13 @@ class _PaymentSentScreenState extends State<PaymentSentScreen> {
                                           payment.name,
                                           style: const TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w400),
+                                              fontWeight: FontWeight.w800),
                                         ),
                                       ),
                                       SizedBox(
                                         width: width * 0.4,
                                         child: Text(
-                                          "${payment.paymentSent} (${payment.date})",
+                                          "Rs-${payment.paymentSent} (${payment.date})",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -114,7 +152,7 @@ class _PaymentSentScreenState extends State<PaymentSentScreen> {
                                       SizedBox(
                                         width: width * 0.4,
                                         child: Text(
-                                          payment.pendingPrice6,
+                                          "Rs-${payment.pendingPrice6}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
@@ -139,7 +177,7 @@ class _PaymentSentScreenState extends State<PaymentSentScreen> {
                                       SizedBox(
                                         width: width * 0.4,
                                         child: Text(
-                                          payment.pendingPrice5,
+                                          "Rs-${payment.pendingPrice5}",
                                           style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400),
